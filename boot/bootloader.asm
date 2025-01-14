@@ -10,6 +10,13 @@ _start:
     mov bp, 0x8000
     mov sp, bp
 
+    mov [BOOT_DRIVE], dl
+
+    mov bx, 0x1000
+    mov dh, 2
+    mov dl, [BOOT_DRIVE]
+    call disk_load
+
     mov bx, realbit_msg
     call bios_print
 
@@ -18,9 +25,10 @@ _start:
     jmp $
 
 %include "src/debug16.asm"
-;%include "src/disk.asm"
+%include "src/disk.asm"
 %include "src/stage1.asm"
 %include "src/gdt32.asm"
+%include "src/print_hex.asm"
 
 realbit_msg: db "About to load 32 bit mode", 0
 protbit_msg: db "Loaded 32 bit mode", 0
@@ -42,16 +50,16 @@ begin_pm:
     mov ebx, protbit_msg
     call print_pmode
 
-    call delay_loop
+    ;call delay_loop
 
-    ;jmp 0x1000
+    
 
     mov ebx, test1
     call print_pmode
 
     call delay_loop
-    
-    call switch_to_long_mode
+
+    jmp 0x1000
 
     jmp $
 
@@ -65,7 +73,6 @@ delay_loop:
     ret
 
 %include "src/debug32.asm"
-%include "src/bit64.asm"
 
 times 510-($-$$) db 0
 dw 0xAA55

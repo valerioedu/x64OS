@@ -10,17 +10,20 @@ all: bootloader run clean
 bootloader.bin: bootloader.asm
 	$(AS) -f bin -o $@ $<
 
-bootloader: cpu.bin bootloader.bin
-	cat bootloader.bin cpu.bin > bootloader
+stage2.bin: stage2.asm
+	$(AS) -f bin -o $@ $<
 
-cpu.bin: cpu.o paging.o
-	$(LD) $(LDFLAGS) -o $@ $^
+bootloader: stage2.bin bootloader.bin
+	cat bootloader.bin stage2.bin > bootloader
 
-cpu.o: cpu.c cpu/cpu.h
-	$(CC) $(CFLAGS) -o $@ $<
+#cpu.bin: cpu.o paging.o
+#	$(LD) $(LDFLAGS) -o $@ $^
 
-paging.o: cpu/paging.c cpu/cpu.h ../lib/definitions.h
-	$(CC) $(CFLAGS) -o $@ $<
+#cpu.o: cpu.c cpu/cpu.h
+#	$(CC) $(CFLAGS) -o $@ $<
+
+#paging.o: cpu/paging.c cpu/cpu.h ../lib/definitions.h
+#	$(CC) $(CFLAGS) -o $@ $<
 
 run:
 	qemu-system-x86_64 -drive format=raw,file=bootloader
