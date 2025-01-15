@@ -20,4 +20,4 @@ run:
 	qemu-system-x86_64 -hda disk.img
 
 clean:
-	rm -f *.o *.bin bootloader
+	rm -f *.o *.bin disk.img
