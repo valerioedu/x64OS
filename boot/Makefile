@@ -5,28 +5,19 @@ LD = x86_64-linux-gnu-ld
 CFLAGS = -m64 -ffreestanding -fno-pie -fno-stack-protector -nostdlib -c
 LDFLAGS = -m elf_x86_64 -T boot.ld --oformat binary
 
-all: bootloader run clean
+DISK_SIZE = 16
+
+all: disk.img run clean
 
 bootloader.bin: bootloader.asm
 	$(AS) -f bin -o $@ $<
 
-stage2.bin: stage2.asm
-	$(AS) -f bin -o $@ $<
-
-bootloader: stage2.bin bootloader.bin
-	cat bootloader.bin stage2.bin > bootloader
-
-#cpu.bin: cpu.o paging.o
-#	$(LD) $(LDFLAGS) -o $@ $^
-
-#cpu.o: cpu.c cpu/cpu.h
-#	$(CC) $(CFLAGS) -o $@ $<
-
-#paging.o: cpu/paging.c cpu/cpu.h ../lib/definitions.h
-#	$(CC) $(CFLAGS) -o $@ $<
+disk.img: bootloader.bin
+	dd if=/dev/zero of=$@ bs=1M count=16
+	dd if=bootloader.bin of=$@ conv=notrunc
 
 run:
-	qemu-system-x86_64 -drive format=raw,file=bootloader
+	qemu-system-x86_64 -hda disk.img
 
 clean:
 	rm -f *.o *.bin bootloader
