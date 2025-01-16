@@ -1,12 +1,12 @@
 disk_load:
     pusha 
-    push dx     ; number of sectors (input parameter)
+    push dx
 
-    mov ah, 0x02    ; read function 
-    mov al, dh      ; number of sectors
-    mov cl, 0x02    ; start reading from second sector (after boot sector)
-    mov ch, 0x00    ; cylinder 0
-    mov dh, 0x00    ; head 0
+    mov ah, 0x02
+    mov al, dh
+    mov cl, 0x02
+    mov ch, 0x00
+    mov dh, 0x00
 
     ; Print drive number
     ;push dx
@@ -21,10 +21,10 @@ disk_load:
     ; dl should already contain the correct drive number from the caller
     ; read data to [es:bx] 
     int 0x13
-    jc disk_error   ; carry bit is set -> error
+    jc disk_error
 
     pop dx 
-    cmp al, dh      ; read correct number of sectors
+    cmp al, dh
     jne sectors_error
 
     popa 

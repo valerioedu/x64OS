@@ -101,10 +101,10 @@ begin_pm:
 
 ;delay_loop:
 ;    push ecx
-;    mov ecx, 100000000  ; 1 million iterations
+;    mov ecx, 100000000
 ;.loop:
-;    nop              ; Halt the CPU until the next interrupt
-;    loop .loop       ; Decrement ECX and jump to .loop if ECX is not zero
+;    nop
+;    loop .loop
 ;    pop ecx
 ;    ret
 
@@ -117,7 +117,7 @@ begin_lm:
     mov rax, 0x2f592f412f4b2f4f
     mov qword [0xb8000], rax
 
-    jmp $
+    jmp 0x10000
 
 times 510-($-$$) db 0
 dw 0xAA55
