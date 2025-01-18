@@ -27,5 +27,6 @@ typedef enum Color {
 
 void vga_clear();
 void vga_init();
+void vga_putc(char c);
 
 #endif

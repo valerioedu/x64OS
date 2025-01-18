@@ -11,5 +11,7 @@ void kernel_main() {
         kfree(ptr);
         kprint("Memory freed\n");
     }
+    idt_init();
+    kprint("Interrupts enabled\n");
     for (;;) asm volatile ("hlt");
 }
