@@ -1,6 +1,7 @@
 #include "pic.h"
 #include "../../../lib/definitions.h"
 #include "../../drivers/keyboard/keyboard.h"
+#include "../../threading/threading.h"
 
 static volatile uint64_t g_timer_ticks = 0;
 
