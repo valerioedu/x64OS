@@ -1,0 +1,1 @@
+[![CodeFactor](https://www.codefactor.io/repository/github/valerioedu/x64os/badge/main)](https://www.codefactor.io/repository/github/valerioedu/x64os/overview/main)
