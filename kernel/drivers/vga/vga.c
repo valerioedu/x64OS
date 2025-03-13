@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include "vga.h"
 #include "../../../lib/definitions.h"
 
@@ -42,6 +43,12 @@ void vga_putc(char c) {
         }
         return;
     }
+    if (c == '\b') {
+        uint16_t position = get_cursor_position();
+        vga_move_cursor((position - 1) % VGA_WIDTH, (position - 1) / VGA_WIDTH);
+        VGA_MEMORY[position] = (uint16_t)' ' | (0x0A << 8);
+        return;
+    }
     uint16_t position = get_cursor_position();
     VGA_MEMORY[position] = (uint16_t)c | (0x0A << 8);
     vga_move_cursor((position + 1) % VGA_WIDTH, (position + 1) / VGA_WIDTH);
@@ -51,6 +58,67 @@ void kprint(const char* str) {
     for (int i = 0; i < strlen(str); i++) {
         vga_putc(str[i]);
     }
+}
+
+void kprint_num(int num) {
+    char buf[16];
+    int i = 0;
+    int is_negative = 0;
+    
+    if (num < 0) {
+        is_negative = 1;
+        num = -num;
+    }
+    
+    do {
+        buf[i++] = '0' + (num % 10);
+        num /= 10;
+    } while (num > 0 && i < 15);
+    
+    if (is_negative) {
+        buf[i++] = '-';
+    }
+    
+    buf[i] = '\0';
+    
+    for (int j = 0, k = i - 1; j < k; j++, k--) {
+        char temp = buf[j];
+        buf[j] = buf[k];
+        buf[k] = temp;
+    }
+    
+    kprint(buf);
+}
+
+void kprintf(const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    
+    for (const char* p = format; *p != '\0'; p++) {
+        if (*p == '%') {
+            p++;
+            switch (*p) {
+                case 'd': {
+                    int num = va_arg(args, int);
+                    kprint_num(num);
+                    break;
+                }
+                case 's': {
+                    const char* str = va_arg(args, const char*);
+                    kprint(str);
+                    break;
+                }
+                default:
+                    vga_putc('%');
+                    vga_putc(*p);
+                    break;
+            }
+        } else {
+            vga_putc(*p);
+        }
+    }
+    
+    va_end(args);
 }
 
 void vga_init() {

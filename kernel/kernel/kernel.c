@@ -1,4 +1,5 @@
 #include "kernel.h"
+#include "../drivers/keyboard/keyboard.h"
 
 void kernel_main() {
     vga_init();
@@ -11,7 +12,11 @@ void kernel_main() {
         kfree(ptr);
         kprint("Memory freed\n");
     }
+    keyboard_init();
     idt_init();
     kprint("Interrupts enabled\n");
+    keyboard_init();
+    char* str = read();
+    kprint(str);
     for (;;) asm volatile ("hlt");
 }

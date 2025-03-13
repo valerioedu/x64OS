@@ -23,6 +23,10 @@ void idt_set_entry(uint8_t index, uint64_t base, uint16_t sel, uint8_t flags) {
 void idt_init() {
     asm volatile("cli");
 
+    pic_remap();
+    outb(0x64, 0xAE);
+
+
     for (int i = 0; i < IDT_ENTRIES; i++) {
         if (i == 0x20) {
             idt_set_entry(i, (uint64_t)timer_stub, 0x08, 0x8E);
