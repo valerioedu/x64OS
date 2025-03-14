@@ -1,4 +1,5 @@
 #include "process.h"
+#include "../../mm/stack.h"
 
 Process* process_list = NULL;
 Process* current_process = NULL;

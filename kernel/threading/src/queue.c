@@ -37,6 +37,6 @@ Process* dequeue_process(ProcessPriority priority) {
 int highest_priority_nonempty() {
     for (int i = 4; i >= 0; i--) {
         if (priority_queues[i].head != NULL) return i;
-        else return -1;
     }
+    return -1;
 }

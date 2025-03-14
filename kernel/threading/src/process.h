@@ -43,6 +43,10 @@ typedef struct __attribute__((packed)) CpuState {
     uint64_t ss;
 } CpuState;
 
+typedef struct FpuState {
+
+} FpuState;
+
 typedef struct Process {        //basic, but should do the job for now
     ProcessPriority priority;
     CpuState cpu_state;
@@ -54,7 +58,7 @@ typedef struct Process {        //basic, but should do the job for now
     struct Process* prev;
 } Process;
 
-typedef struct {
+typedef struct ProcessQueue {
     Process* head;
     Process* tail;
 } ProcessQueue;

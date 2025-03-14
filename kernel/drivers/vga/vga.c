@@ -108,6 +108,11 @@ void kprintf(const char* format, ...) {
                     kprint(str);
                     break;
                 }
+                case 'c': {
+                    char c = va_arg(args, int);
+                    vga_putc(c);
+                    break;
+                }
                 default:
                     vga_putc('%');
                     vga_putc(*p);
