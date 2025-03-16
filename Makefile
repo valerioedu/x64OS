@@ -8,3 +8,6 @@ check_qemu:
 		echo "qemu is not installed. Please install qemu."; \
 		exit 1; \
 	fi
+
+clean:
+	$(MAKE) -C boot clean

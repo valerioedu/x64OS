@@ -5,6 +5,7 @@
 #include "../drivers/vga/vga.h"
 #include "../mm/heap.h"
 #include "../cpu/interrupts.h"
+#include "../drivers/IDE/ide.h"
 
 void kernel_main();
 

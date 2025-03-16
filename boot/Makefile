@@ -18,7 +18,7 @@ bootloader.bin: bootloader.asm
 main.o: main.c
 	$(CC) $(CFLAGS) $< -o $@
 
-main.bin: main.o ../kernel/vga.o ../kernel/string.o ../kernel/kernel.o ../kernel/heap.o ../kernel/cpu/idt.o ../kernel/cpu/idt_load.o ../kernel/cpu/interrupts.o ../kernel/cpu/isr.o ../kernel/keyboard.o ../kernel/cpu/fpu.o
+main.bin: main.o ../kernel/vga.o ../kernel/string.o ../kernel/kernel.o ../kernel/heap.o ../kernel/cpu/idt.o ../kernel/cpu/idt_load.o ../kernel/cpu/interrupts.o ../kernel/cpu/isr.o ../kernel/keyboard.o ../kernel/cpu/fpu.o #../kernel/ide.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 disk.img: bootloader.bin main.bin

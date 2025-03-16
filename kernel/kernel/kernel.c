@@ -21,5 +21,6 @@ void kernel_main() {
     kprint("Keyboard initialized\n");
     int a = fpu_init();
     if (a == 0) kprint("Floating Point Unit initialized\n");
+    //ide_init();
     for (;;) asm volatile ("hlt");
 }

@@ -2,10 +2,7 @@
 #define WRITE_H
 
 #include "../../../lib/definitions.h"
-
-#ifndef stdout
-#define stdout 1
-#endif
+#include "../io.h"
 
 ssize_t write(int fd, const void* buf, size_t nbyte);
 
