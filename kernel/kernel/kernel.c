@@ -14,13 +14,12 @@ void kernel_main() {
         kfree(ptr);
         kprint("Memory freed\n");
     }
-    keyboard_init();
     idt_init();
     kprint("Interrupts enabled\n");
     keyboard_init();
     kprint("Keyboard initialized\n");
+    ide_init();
     int a = fpu_init();
     if (a == 0) kprint("Floating Point Unit initialized\n");
-    //ide_init();
     for (;;) asm volatile ("hlt");
 }
