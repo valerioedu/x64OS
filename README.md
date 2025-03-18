@@ -10,3 +10,4 @@ To compile and run this prototype, make sure that you have QEMU and x86-64 GCC i
 
 TO DO LIST:
 -Finish the scheduler
+-Start working on syscalls and syscalls interrupt
