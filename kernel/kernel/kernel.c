@@ -21,5 +21,6 @@ void kernel_main() {
     ide_init();
     int a = fpu_init();
     if (a == 0) kprint("Floating Point Unit initialized\n");
+    char *c = read();
     for (;;) asm volatile ("hlt");
 }

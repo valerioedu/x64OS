@@ -15,22 +15,17 @@ _start:
     mov ax, 0x1000
     mov es, ax
     mov bx, 0x0000
-    mov dh, 10
+    mov dh, 25                      ; must be at least size of the kernel / 512
     mov dl, [BOOT_DRIVE]
     call disk_load
-
-    ;mov bx, realbit_msg
-    ;call bios_print
 
     call switch_to_pm
 
     jmp $
 
-;%include "src/debug16.asm"
 %include "src/disk.asm"
 %include "src/stage1.asm"
 %include "src/gdt32.asm"
-;%include "src/print_hex.asm"
 
 protbit_msg: db "Loaded 32 bit mode", 0
 test1: db "test", 0
@@ -51,14 +46,8 @@ begin_pm:
     mov ebx, protbit_msg
     call print_pmode
 
-    ;call delay_loop
-
-    
-
     mov ebx, test1
     call print_pmode
-
-    ;call delay_loop
 
     mov edi, 0x1000
     mov cr3, edi
@@ -75,7 +64,7 @@ begin_pm:
     add edi, 0x1000
 
     mov ebx, 0x00000003
-    mov ecx, 512
+    mov ecx, 1024
 
 .SetEntry:
     mov DWORD [edi], ebx
@@ -98,15 +87,6 @@ begin_pm:
 
     lgdt [gdt64.Pointer]
     jmp gdt64.Code:begin_lm
-
-;delay_loop:
-;    push ecx
-;    mov ecx, 100000000
-;.loop:
-;    nop
-;    loop .loop
-;    pop ecx
-;    ret
 
 %include "src/debug32.asm"
 %include "src/gdt64.asm"

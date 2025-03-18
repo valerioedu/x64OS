@@ -4,27 +4,25 @@
 #include "../../../lib/definitions.h"
 
 char scancode_to_ascii(uint8_t scancode) {
-    //static int shift_pressed = 0;
+    /*static int shift_pressed = 0;
 
-    // 0x2A = Left Shift (press), 0x36 = Right Shift (press)
-    // 0xAA = Left Shift (release), 0xB6 = Right Shift (release)
-    //if (scancode == 0x2A || scancode == 0x36) {
-    //    shift_pressed = 1;
-    //    return 0; 
-    //} else if (scancode == (0x2A + 0x80) || scancode == (0x36 + 0x80)) {
-    //    shift_pressed = 0;
-    //    return 0;
-    //}
+    0x2A = Left Shift (press), 0x36 = Right Shift (press)
+    0xAA = Left Shift (release), 0xB6 = Right Shift (release)
+    if (scancode == 0x2A || scancode == 0x36) {
+        shift_pressed = 1;
+        return 0; 
+    } else if (scancode == (0x2A + 0x80) || scancode == (0x36 + 0x80)) {
+        shift_pressed = 0;
+        return 0;
+    }*/
 
-    // Now handle "press" scancodes directly
     switch (scancode) {
-        //case 0x01: return 27;        // Esc
+        case 0x01: return 27;        // Esc
         case 0x0E: return '\b';      // Backspace
-        //case 0x0F: return '\t';      // Tab
+        case 0x0F: return '\t';      // Tab
         case 0x1C: return '\n';      // Enter
         case 0x39: return ' ';       // Space bar
 
-        // Letters
         case 0x1E: return 'a';
         case 0x30: return 'b';
         case 0x2E: return 'c';
@@ -52,33 +50,29 @@ char scancode_to_ascii(uint8_t scancode) {
         case 0x15: return 'y';
         case 0x2C: return 'z';
 
-        // Number row (unshifted). For shifted symbols (e.g. '!', '@'),
-        // you'll need to do additional logic if shift_pressed == 1.
-        //case 0x02: return '1';
-        //case 0x03: return '2';
-        //case 0x04: return '3';
-        //case 0x05: return '4';
-        //case 0x06: return '5';
-        //case 0x07: return '6';
-        //case 0x08: return '7';
-        //case 0x09: return '8';
-        //case 0x0A: return '9';
-        //case 0x0B: return '0';
+        case 0x02: return '1';
+        case 0x03: return '2';
+        case 0x04: return '3';
+        case 0x05: return '4';
+        case 0x06: return '5';
+        case 0x07: return '6';
+        case 0x08: return '7';
+        case 0x09: return '8';
+        case 0x0A: return '9';
+        case 0x0B: return '0';
 
-        // A few punctuation keys (unshifted)
-        //case 0x1A: return '[';
-        //case 0x1B: return ']';
-        //case 0x2B: return '\\';
-        //case 0x27: return ';';
-        //case 0x28: return '\'';
-        //case 0x33: return ',';
-        //case 0x34: return '.';
-        //case 0x35: return '/';
-        //case 0x29: return '`';
+        case 0x1A: return '[';
+        case 0x1B: return ']';
+        case 0x2B: return '\\';
+        case 0x27: return ';';
+        case 0x28: return '\'';
+        case 0x33: return ',';
+        case 0x34: return '.';
+        case 0x35: return '/';
+        case 0x29: return '`';
 
         default:
-            // Unhandled scancode
-            //return 0;
+            return 0;
     }
 }
 
