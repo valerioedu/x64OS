@@ -9,5 +9,5 @@ Please note that this project is a work in progress; as of now the makefiles are
 To compile and run this prototype, make sure that you have QEMU and x86-64 GCC installed. Then, you will only need to type `make` in the console.
 
 TO DO LIST:
--Finish the keyboard firmware
 -Finish the scheduler
+-Start working on syscalls and syscalls interrupt
