@@ -20,6 +20,11 @@ void idt_set_entry(uint8_t index, uint64_t base, uint16_t sel, uint8_t flags) {
     idt[index].reserved    = 0;
 }
 
+void double_fault_handler() {
+    kprint("Double fault\n");
+    asm volatile("hlt");
+}
+
 void idt_init() {
     asm volatile("cli");
 
@@ -32,6 +37,8 @@ void idt_init() {
             idt_set_entry(i, (uint64_t)timer_stub, 0x08, 0x8E);
         } else if (i == 0x21) {
             idt_set_entry(i, (uint64_t)keyboard_stub, 0x08, 0x8E);
+        } else if (i == 8) {
+            idt_set_entry(i, (uint64_t)double_fault_handler, 0x08, 0x8E);
         } else {
             idt_set_entry(i, (uint64_t)default_isr_stub, 0x08, 0x8E);
         }

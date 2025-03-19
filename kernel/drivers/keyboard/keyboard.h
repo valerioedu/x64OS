@@ -42,7 +42,7 @@
 
 #define KEYBOARD_RELEASE 0x80
 
-extern char scancode_set1[128];
+extern const char scancode_set1[128];
 
 #define KEY_IS_PRESS(_scancode) (!(_scancode & KEYBOARD_RELEASE))
 #define KEY_IS_RELEASE(_scancode) (_scancode & KEYBOARD_RELEASE)

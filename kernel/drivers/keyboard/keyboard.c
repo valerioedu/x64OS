@@ -7,61 +7,43 @@
 
 volatile uint8_t g_last_scancode = 0;
 volatile char    g_last_char     = 0;
+static volatile uint8_t g_shift_pressed = 0;
+static volatile uint8_t g_ctrl_pressed = 0;
+static volatile uint8_t g_alt_pressed = 0;
+static volatile uint8_t g_caps_lock_on = 0;
 
-static const char scancode_to_ascii_table[128] = {
-    [0x01] = KEY_ESC,
-    [0x0E] = '\b',
-    [0x0F] = '\t',
-    [0x1C] = '\n',
-    [0x39] = ' ',
+const char scancode_set1[128] = {
+    0,      KEY_ESC, '1',    '2',    '3',    '4',    '5',    '6',
+    '7',    '8',    '9',    '0',    '-',    '=',    KEY_BACKSPACE, KEY_TAB,
+    'q',    'w',    'e',    'r',    't',    'y',    'u',    'i',
+    'o',    'p',    '[',    ']',    KEY_ENTER, 0,     'a',    's',
+    'd',    'f',    'g',    'h',    'j',    'k',    'l',    ';',
+    '\'',   '`',    0,      '\\',   'z',    'x',    'c',    'v',
+    'b',    'n',    'm',    ',',    '.',    '/',    0,      '*',
+    0,      ' ',    0,      KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5,
+    KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, 0,     0,      KEY_HOME,
+    KEY_UP, KEY_PAGE_UP, '-', KEY_LEFT, '5', KEY_RIGHT, '+', KEY_END,
+    KEY_DOWN, KEY_PAGE_DOWN, KEY_INSERT, KEY_DELETE, 0, 0,   0,     KEY_F11,
+    KEY_F12, 0,     0,      0,      0,      0,      0,      0,
+    0,      0,      0,      0,      0,      0,      0,      0,
+    0,      0,      0,      0,      0,      0,      0,      0,
+    0,      0,      0,      0,      0,      0,      0,      0,
+    0,      0,      0,      0,      0,      0,      0,      0
+};
 
-    [0x1E] = 'a',
-    [0x30] = 'b',
-    [0x2E] = 'c',
-    [0x20] = 'd',
-    [0x12] = 'e',
-    [0x21] = 'f',
-    [0x22] = 'g',
-    [0x23] = 'h',
-    [0x17] = 'i',
-    [0x24] = 'j',
-    [0x25] = 'k',
-    [0x26] = 'l',
-    [0x32] = 'm',
-    [0x31] = 'n',
-    [0x18] = 'o',
-    [0x19] = 'p',
-    [0x10] = 'q',
-    [0x13] = 'r',
-    [0x1F] = 's',
-    [0x14] = 't',
-    [0x16] = 'u',
-    [0x2F] = 'v',
-    [0x11] = 'w',
-    [0x2D] = 'x',
-    [0x15] = 'y',
-    [0x2C] = 'z',
-
-    [0x02] = '1',
-    [0x03] = '2',
-    [0x04] = '3',
-    [0x05] = '4',
-    [0x06] = '5',
-    [0x07] = '6',
-    [0x08] = '7',
-    [0x09] = '8',
-    [0x0A] = '9',
-    [0x0B] = '0',
-
-    [0x1A] = '[',
-    [0x1B] = ']',
-    [0x2B] = '\\',
-    [0x27] = ';',
-    [0x28] = '\'',
-    [0x33] = ',',
-    [0x34] = '.',
-    [0x35] = '/',
-    [0x29] = '`'
+const char scancode_shifted[128] = {
+    0,      KEY_ESC, '!',    '@',    '#',    '$',    '%',    '^',
+    '&',    '*',    '(',    ')',    '_',    '+',    KEY_BACKSPACE, KEY_TAB,
+    'Q',    'W',    'E',    'R',    'T',    'Y',    'U',    'I',
+    'O',    'P',    '{',    '}',    KEY_ENTER, 0,     'A',    'S',
+    'D',    'F',    'G',    'H',    'J',    'K',    'L',    ':',
+    '"',    '~',    0,      '|',    'Z',    'X',    'C',    'V',
+    'B',    'N',    'M',    '<',    '>',    '?',    0,      '*',
+    0,      ' ',    0,      KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5,
+    KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, 0,     0,      KEY_HOME,
+    KEY_UP, KEY_PAGE_UP, '-', KEY_LEFT, '5', KEY_RIGHT, '+', KEY_END,
+    KEY_DOWN, KEY_PAGE_DOWN, KEY_INSERT, KEY_DELETE, 0, 0,   0,     KEY_F11,
+    KEY_F12, 0,     0,      0,      0,      0,      0,      0,
 };
 
 void keyboard_init() {
@@ -74,10 +56,43 @@ void keyboard_init() {
 }
 
 void isr_keyboard_handler() {
-    uint16_t scancode = (uint16_t)inb(0x60);
+    uint8_t scancode = inb(0x60);
     g_last_scancode = scancode;
-    if (KEY_IS_PRESS(scancode)) {
-        g_last_char = scancode_to_ascii_table[scancode];
+    
+    if (scancode == KEY_LSHIFT || scancode == KEY_RSHIFT) {
+        g_shift_pressed = 1;
+    } else if (scancode == (KEY_LSHIFT | KEYBOARD_RELEASE) || 
+               scancode == (KEY_RSHIFT | KEYBOARD_RELEASE)) {
+        g_shift_pressed = 0;
+    } else if (scancode == KEY_CTRL) {
+        g_ctrl_pressed = 1;
+    } else if (scancode == (KEY_CTRL | KEYBOARD_RELEASE)) {
+        g_ctrl_pressed = 0;
+    } else if (scancode == KEY_ALT) {
+        g_alt_pressed = 1;
+    } else if (scancode == (KEY_ALT | KEYBOARD_RELEASE)) {
+        g_alt_pressed = 0;
+    } else if (scancode == KEY_CAPS_LOCK) {
+        g_caps_lock_on = !g_caps_lock_on;
+    } else if (KEY_IS_PRESS(scancode)) {
+        uint8_t sc = KEY_SCANCODE(scancode);
+        
+        if (g_shift_pressed) {
+            g_last_char = scancode_shifted[sc];
+        } else {
+            g_last_char = scancode_set1[sc];
+        }
+        
+        if (g_caps_lock_on) {
+            if ((g_last_char >= 'a' && g_last_char <= 'z') || 
+                (g_last_char >= 'A' && g_last_char <= 'Z')) {
+                g_last_char ^= 0x20;
+            }
+        }
+        
+        if (g_ctrl_pressed && g_last_char >= 'a' && g_last_char <= 'z') {
+            g_last_char = g_last_char - 'a' + 1;
+        }
     }
     
     pic_send_eoi(1);
