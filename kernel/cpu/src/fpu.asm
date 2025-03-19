@@ -1,4 +1,5 @@
 global fpu_init
+global get_fpu_status
 
 section .text
 
@@ -15,4 +16,9 @@ fpu_init:
 
     fninit
     mov rax, 0
+    ret
+
+get_fpu_status:
+    fnstsw ax
+    mov rax, rax
     ret
