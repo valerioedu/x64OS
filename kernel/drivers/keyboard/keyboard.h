@@ -53,11 +53,17 @@ extern const char scancode_set1[128];
 }))
 
 extern volatile char g_last_char;
+extern volatile uint8_t g_shift_pressed;
+extern volatile uint8_t g_ctrl_pressed;
+extern volatile uint8_t g_alt_pressed;
+extern volatile uint8_t g_caps_lock_on;
+extern volatile uint8_t g_arrow_key_pressed;
+extern uint8_t g_macro_count;
 
 void keyboard_init();
 void isr_keyboard_handler();
 uint8_t keyboard_get_scancode();
 char keyboard_get_char();
-char* read();
+char* keyboard_read_line();
 
 #endif
