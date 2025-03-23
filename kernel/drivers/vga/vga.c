@@ -22,6 +22,12 @@ uint16_t get_cursor_position() {
     return position;
 }
 
+void vga_get_cursor(int *x, int *y) {
+    uint16_t position = get_cursor_position();
+    *x = position % VGA_WIDTH;
+    *y = position / VGA_WIDTH;
+}
+
 void vga_move_cursor(int x, int y) {
     uint16_t position = (y * VGA_WIDTH) + x;
     outb(0x3D4, 0x0F);
