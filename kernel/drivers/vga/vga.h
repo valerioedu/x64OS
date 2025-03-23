@@ -8,6 +8,8 @@
 
 #define VGA_ADDRESS 0xB8000
 
+void vga_get_cursor(int *x, int *y);
+void vga_move_cursor(int x, int y);
 void vga_clear();
 void vga_init();
 void vga_putc(char c);
