@@ -21,7 +21,9 @@ main.o: main.c
 main.bin: main.o ../kernel/vga.o ../kernel/string.o ../kernel/kernel.o \
 		 ../kernel/heap.o ../kernel/cpu/idt.o ../kernel/cpu/idt_load.o \
 		 ../kernel/cpu/interrupts.o ../kernel/cpu/isr.o ../kernel/keyboard.o \
-		 ../kernel/cpu/fpu.o ../kernel/ide.o
+		 ../kernel/cpu/fpu.o ../kernel/ide.o ../kernel/macros.o #\
+		 ../kernel/threading/context_switch.o ../kernel/threading/queue.o \
+		 ../kernel/threading/scheduling.o 
 	$(LD) $(LDFLAGS) $^ -o $@
 
 disk.img: bootloader.bin main.bin

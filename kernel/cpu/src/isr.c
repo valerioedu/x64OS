@@ -9,6 +9,7 @@ static volatile uint8_t g_last_scancode = 0;
 
 void isr_timer_handler() {
     g_timer_ticks++;
+    //schedule();
 
     pic_send_eoi(0);
 }
