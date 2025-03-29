@@ -15,7 +15,7 @@ _start:
     mov ax, 0x1000
     mov es, ax
     mov bx, 0x0000
-    mov dh, 25                      ; must be at least size of the kernel / 512
+    mov dh, 50                      ; must be at least size of the kernel / 512
     mov dl, [BOOT_DRIVE]
     call disk_load
 
