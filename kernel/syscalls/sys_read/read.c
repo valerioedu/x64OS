@@ -1,5 +1,6 @@
 #include "read.h"
 #include "../../drivers/keyboard/keyboard.h"
+#include "../io.h"
 
 ssize_t read(int fd, void* buf, size_t nbyte) {
     if (fd == stdin) {
