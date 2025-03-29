@@ -3,6 +3,7 @@
 #include "../../../lib/definitions.h"
 
 static uint16_t* const VGA_MEMORY = (uint16_t*)0xB8000;
+uint8_t color = 0x0F;
 
 void vga_clear() {
     for (int y = 0; y < VGA_HEIGHT; y++) {
@@ -73,7 +74,7 @@ void vga_putc(char c) {
         return;
     }
     uint16_t position = get_cursor_position();
-    VGA_MEMORY[position] = (uint16_t)c | (0x0A << 8);
+    VGA_MEMORY[position] = (uint16_t)c | (color << 8);
     vga_move_cursor((position + 1) % VGA_WIDTH, (position + 1) / VGA_WIDTH);
 
     uint16_t newPos = get_cursor_position();
@@ -200,7 +201,12 @@ void kprintf(const char* format, ...) {
     va_end(args);
 }
 
+void set_color(Color new_color) {
+    color = new_color;
+}
+
 void vga_init() {
     vga_clear();
     vga_move_cursor(0, 0);
+    set_color(LIGHT_GREEN);
 }

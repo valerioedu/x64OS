@@ -56,7 +56,7 @@ void keyboard_init() {
         if(inb(0x60) == 0xFA)
             break;
     }
-    init_macros();
+    //init_macros();        I will insert it in the bash
     g_shift_pressed = 0;
     g_ctrl_pressed = 0;
     g_alt_pressed = 0;
