@@ -35,6 +35,6 @@ void vga_clear();
 void vga_init();
 void vga_putc(char c);
 void set_color(Color new_color);
-void kprintcolor(const char* str, Color new)
+void kprintcolor(const char* str, Color new);
 
 #endif
