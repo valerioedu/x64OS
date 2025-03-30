@@ -4,7 +4,7 @@ LD = x86_64-linux-gnu-ld
 INCLUDE_PATHS = -I$(PWD) -I$(PWD)/.. -I$(PWD)/../lib
 CFLAGS = -m64 -ffreestanding -fno-pie -fno-stack-protector -nostdlib $(INCLUDE_PATHS) -c
 
-all: submake vga.o kernel.o string.o heap.o cpu/idt.o cpu/idt_load.o keyboard.o ide.o macros.o input.o read.o
+all: submake vga.o kernel.o string.o heap.o cpu/idt.o cpu/idt_load.o keyboard.o ide.o macros.o input.o read.o write.o
 
 submake:
 	$(MAKE) -C cpu
@@ -35,6 +35,9 @@ input.o: ../lib/src/input.c
 	$(CC) $(CFLAGS) $< -o $@
 
 read.o: syscalls/sys_read/read.c
+	$(CC) $(CFLAGS) $< -o $@
+
+write.o: syscalls/sys_write/write.c
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:
