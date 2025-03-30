@@ -210,3 +210,10 @@ void vga_init() {
     vga_move_cursor(0, 0);
     set_color(LIGHT_GREEN);
 }
+
+void kprintcolor(const char* str, Color new) {
+    Color temp = color;
+    set_color(new);
+    kprint(str);
+    set_color(temp);
+}
