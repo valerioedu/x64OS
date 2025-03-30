@@ -85,14 +85,14 @@ void ide_handle_interrupt(int channel) {
     ide_channel_status_t* status = &channel_status[channel];
     
     if (!status->busy) {
-        kprintf("Unexpected IDE IRQ on channel %d\n", channel);
+        //kprintf("Unexpected IDE IRQ on channel %d\n", channel);
         return;
     }
     
     uint8_t status_reg = inb(base + ATA_REG_STATUS);
     
     if (status_reg & ATA_SR_ERR) {
-        kprintf("IDE Error on channel %d: 0x%x\n", channel, inb(base + ATA_REG_ERROR));
+        //kprintf("IDE Error on channel %d: 0x%x\n", channel, inb(base + ATA_REG_ERROR));
         status->busy = 0;
         status->callback_ready = 1;
         return;

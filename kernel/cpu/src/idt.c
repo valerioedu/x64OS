@@ -6,6 +6,7 @@
 typedef struct {
     uint64_t r15, r14, r13, r12, r11, r10, r9, r8;
     uint64_t rdi, rsi, rdx, rcx, rbx, rax;
+    uint64_t error_code;
     uint64_t rip, cs, rflags, rsp, ss;
 } __attribute__((packed)) interrupt_frame_t;
 
@@ -120,12 +121,22 @@ void handle_exception_gpf(interrupt_frame_t* frame) {
 }
 
 void handle_exception_page_fault(interrupt_frame_t* frame) {
-    uint64_t fault_address;
-    asm volatile("mov %%cr2, %0" : "=r"(fault_address));
+    uint64_t error_code = frame->error_code;
+    uint64_t cr2_value;
+    asm volatile("mov %%cr2, %0" : "=r"(cr2_value));
     
-    kprintf("EXCEPTION: Page Fault\n");
-    kprintf("Attempted to access: 0x%llx\n", fault_address);
+    kprintf("PAGE FAULT at address 0x%x\n", cr2_value);
+    kprintf("Error code: 0x%x\n", error_code);
     kprintf("RIP: 0x%x\n", frame->rip);
+    
+    // Decode the error code
+    kprintf("Cause: %s\n", (error_code & 1) ? "Protection violation" : "Non-present page");
+    kprintf("Operation: %s\n", (error_code & 2) ? "Write" : "Read");
+    kprintf("Privilege: %s\n", (error_code & 4) ? "User" : "Supervisor");
+    
+    // Halt the system
+    kprintf("System halted due to page fault\n");
+    asm volatile("cli; hlt");
 }
 
 void double_fault_handler() {

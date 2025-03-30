@@ -27,6 +27,8 @@ typedef enum Color {
     WHITE         = 0xF
 } Color;
 
+extern uint8_t color;
+
 void vga_get_cursor(int *x, int *y);
 void vga_move_cursor(int x, int y);
 void vga_clear();

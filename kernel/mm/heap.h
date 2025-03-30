@@ -4,7 +4,7 @@
 #include "../../lib/definitions.h"
 
 #define HEAP_START 0x100000
-#define HEAP_SIZE 0x100000
+#define HEAP_SIZE 0x800000
 #define ALIGN(size) (((size) + 15) & ~15)
 
 typedef struct MemBlock {
