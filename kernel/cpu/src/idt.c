@@ -1,6 +1,7 @@
 #include "../interrupts.h"
 #include "pit.h"
 #include "pic.h"
+#include "../../syscalls/sys.h"
 
 typedef struct {
     uint64_t r15, r14, r13, r12, r11, r10, r9, r8;
@@ -27,6 +28,12 @@ extern void exception_segment_stub();
 extern void exception_stack_stub();
 extern void exception_gpf_stub();
 extern void exception_page_fault_stub();
+extern void ide_handle_interrupt(int channel);
+extern void exception_fpu_stub();
+extern void exception_simd_stub();
+extern void syscall_stub();
+extern void ide_primary_stub();
+extern void ide_secondary_stub();
 
 idt_entry idt[IDT_ENTRIES];
 idt_ptr_t idt_ptr;
@@ -134,6 +141,59 @@ void divide_by_zero_handler() {
     asm volatile("hlt");
 }
 
+void handle_ide_primary(interrupt_frame_t* frame) {
+    ide_handle_interrupt(0);    
+    pic_send_eoi(14);
+}
+
+void handle_ide_secondary(interrupt_frame_t* frame) {
+    ide_handle_interrupt(1);    
+    pic_send_eoi(15);
+}
+
+void handle_exception_fpu(interrupt_frame_t* frame) {
+    kprintf("EXCEPTION: x87 FPU Floating-Point Error\n");
+    kprintf("RIP: 0x%x\n", frame->rip);    
+    asm volatile("fnclex");
+}
+
+void handle_exception_simd(interrupt_frame_t* frame) {
+    uint32_t mxcsr;
+    asm volatile("stmxcsr %0" : "=m"(mxcsr));
+    
+    kprintf("EXCEPTION: SIMD Floating-Point Exception\n");
+    kprintf("RIP: 0x%x\n", frame->rip);
+    kprintf("MXCSR: 0x%x\n", mxcsr);
+    
+    mxcsr &= ~(0x3F);
+    asm volatile("ldmxcsr %0" : : "m"(mxcsr));
+}
+
+void handle_syscall(interrupt_frame_t* frame) {
+    uint64_t syscall_number = frame->rax;
+    
+    kprintf("SYSCALL: %d\n", syscall_number);
+    
+    switch (syscall_number) {
+        case 0:
+            kprintf("%s", (const char*)frame->rdi);
+            break;
+          
+        case 2:
+            read(frame->rdi, (char*)frame->rsi, (int)frame->rdx);
+            break;
+            
+        case 3:
+            write(frame->rdi, (const char*)frame->rsi, (int)frame->rdx);
+            break;
+            
+        default:
+            kprintf("UNKNOWN SYSCALL: %d\n", syscall_number);
+            frame->rax = -1;
+            break;
+    }
+}
+
 void idt_init() {
     asm volatile("cli");
 
@@ -161,6 +221,13 @@ void idt_init() {
 
     idt_set_entry(0x20, (uint64_t)timer_stub, 0x08, 0x8E);
     idt_set_entry(0x21, (uint64_t)keyboard_stub, 0x08, 0x8E);
+    idt_set_entry(0x10, (uint64_t)exception_fpu_stub, 0x08, 0x8E);
+    idt_set_entry(0x13, (uint64_t)exception_simd_stub, 0x08, 0x8E);
+
+    idt_set_entry(0x2E, (uint64_t)ide_primary_stub, 0x08, 0x8E);
+    idt_set_entry(0x2F, (uint64_t)ide_secondary_stub, 0x08, 0x8E);
+
+    idt_set_entry(0x80, (uint64_t)syscall_stub, 0x08, 0xEE);
     
     idt_ptr.limit = sizeof(idt) - 1;
     idt_ptr.base  = (uint64_t)&idt[0];

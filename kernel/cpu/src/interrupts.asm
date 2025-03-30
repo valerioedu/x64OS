@@ -16,6 +16,11 @@ global exception_segment_stub
 global exception_stack_stub
 global exception_gpf_stub
 global exception_page_fault_stub
+global exception_fpu_stub
+global exception_simd_stub
+global syscall_stub
+global ide_primary_stub
+global ide_secondary_stub
 
 section .text
 
@@ -88,6 +93,11 @@ EXCEPTION_ERR exception_segment_stub, handle_exception_segment
 EXCEPTION_ERR exception_stack_stub, handle_exception_stack
 EXCEPTION_ERR exception_gpf_stub, handle_exception_gpf
 EXCEPTION_ERR exception_page_fault_stub, handle_exception_page_fault
+EXCEPTION_NO_ERR exception_fpu_stub, handle_exception_fpu
+EXCEPTION_NO_ERR exception_simd_stub, handle_exception_simd
+EXCEPTION_NO_ERR syscall_stub, handle_syscall
+EXCEPTION_NO_ERR ide_primary_stub, handle_ide_primary
+EXCEPTION_NO_ERR ide_secondary_stub, handle_ide_secondary
 
 default_isr_stub:
     PUSH
