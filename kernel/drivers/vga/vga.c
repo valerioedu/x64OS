@@ -5,6 +5,8 @@
 static uint16_t* const VGA_MEMORY = (uint16_t*)0xB8000;
 uint8_t color = 0x0F;
 
+void rmline();
+
 void vga_clear() {
     for (int y = 0; y < VGA_HEIGHT; y++) {
         for (int x = 0; x < VGA_WIDTH; x += 2) {
@@ -84,6 +86,11 @@ void vga_putc(char c) {
 }
 
 void kprint(const char* str) {
+    if (strcmp(str, "\033[2k") == 0) {
+        rmline();
+        return;
+    }
+
     for (int i = 0; i < strlen(str); i++) {
         vga_putc(str[i]);
     }
@@ -216,4 +223,14 @@ void kprintcolor(const char* str, Color new) {
     set_color(new);
     kprint(str);
     set_color(temp);
+}
+
+void rmline() {
+    int x, y;
+    vga_get_cursor(&x, &y);
+    vga_move_cursor(0, y);
+    for (int i = 0; i < VGA_WIDTH; i++) {
+        vga_putc(' ');
+    }
+    vga_move_cursor(0, y);
 }

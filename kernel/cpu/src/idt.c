@@ -243,7 +243,7 @@ void idt_init() {
     idt_ptr.limit = sizeof(idt) - 1;
     idt_ptr.base  = (uint64_t)&idt[0];
 
-    pit_set_frequency(100);
+    pit_set_frequency(1000);
 
     idt_load((uint64_t)&idt_ptr);
 

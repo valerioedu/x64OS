@@ -9,7 +9,7 @@
 
 static inline void pit_set_frequency(uint32_t hz) {
     if (hz == 0) {
-        hz = 100;
+        hz = 1000;
     }
 
     uint32_t divisor = PIT_BASE_FRQ / hz;
