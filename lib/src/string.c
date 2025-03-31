@@ -96,6 +96,17 @@ char* strchr(const char* str, int c) {
     return NULL;
 }
 
+char* strrchr(const char* str, int c) {
+    const char* last = NULL;
+    while (*str) {
+        if (*str == (char)c) {
+            last = str;
+        }
+        str++;
+    }
+    return (char*)last;
+}
+
 char* strtok(char *str, const char *delim) {
     static char *last = NULL;
     if (str == NULL) str = last;

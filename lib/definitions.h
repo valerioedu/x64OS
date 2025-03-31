@@ -8,6 +8,7 @@ typedef unsigned long long uint64_t;
 typedef unsigned int size_t;
 typedef long long ssize_t;
 typedef uint64_t uintptr_t;
+typedef int mode_t;
 
 #define NULL ((void*)0)
 
@@ -47,5 +48,6 @@ char* strncpy(char* dest, const char* src, size_t n);
 char* strchr(const char* str, int c);
 char *strtok(char* str, const char* delim);
 char *strcat(char *dest, const char *src);
+char* strrchr(const char* str, int c);
 
 #endif
