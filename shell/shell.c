@@ -57,7 +57,7 @@ void shell_loop() {
                 if (strcmp(command, commands[k].name) == 0) {
                     commands[k].function(args);
                     break;
-                }
+                } else kprintf("Error: Command not found\n");
             }
         }
     }
