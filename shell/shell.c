@@ -53,11 +53,16 @@ void shell_loop() {
             }
             args[j] = '\0';
 
+            bool found = false;
             for (int k = 0; k < sizeof(commands) / sizeof(Command); k++) {
                 if (strcmp(command, commands[k].name) == 0) {
                     commands[k].function(args);
+                    found = true;
                     break;
-                } else kprintf("Error: Command not found\n");
+                }
+            }
+            if (!found) {
+                kprintf("Command not found: %s\n", command);
             }
         }
     }
