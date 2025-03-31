@@ -8,7 +8,8 @@ all: submake vga.o kernel.o string.o heap.o cpu/idt.o cpu/idt_load.o keyboard.o 
 
 submake:
 	$(MAKE) -C cpu
-	$(MAKE) -C threading
+	$(MAKE) -C fs
+#	$(MAKE) -C threading
 
 vga.o: drivers/vga/vga.c
 	$(CC) $(CFLAGS) $< -o $@ 
@@ -43,4 +44,5 @@ write.o: syscalls/sys_write/write.c
 clean:
 	rm -f *.o
 	$(MAKE) -C cpu clean
+	$(MAKE) -C fs clean
 #	$(MAKE) -C threading clean
