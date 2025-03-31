@@ -11,12 +11,19 @@ Command commands[] = {
     {"cd", cd},
     {"ls", ls},
     {"touch", touch},
-    {"rm", rm}
+    {"rm", rm},
+    {"rmdir", rmdir}
 };
 
+void shell_init() {
+    kprintf("\n\n\n-----------------------\n");
+    kprintf("ProtoBash Shell\n");
+    kprintf("Type 'help' for a list of commands\n");
+    kprintf("-----------------------\n\n");
+}
+
 void shell_loop() {
-    kprint("ProtoBash Shell\n");
-    kprint("Type 'help' for a list of commands\n");
+    shell_init();
     while (1) {
         kprintf("x64OS");
         set_color(WHITE);

@@ -47,7 +47,7 @@ void mkdir(char* args) {
 
         int result = current_dir->ops->mkdir(current_dir, args, 0755);
         if (result) {
-            kprintf("Directory '%s' created successfully\n", args);
+            //kprintf("Directory '%s' created successfully\n", args);
         } else {
             kprintf("Failed to create directory '%s'\n", args);
             DiskfsInfo* dfs = (DiskfsInfo*)current_dir->sb->fs_specific;

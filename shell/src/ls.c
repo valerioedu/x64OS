@@ -32,6 +32,7 @@ void ls(char* args) {
                 set_color(is_dir ? LIGHT_CYAN : LIGHT_GREEN);
 
                 kprintf("  %s%s\n", entries[i].name, is_dir ? "/" : "");
+                set_color(LIGHT_GREEN);
             }
 
             uint32_t next_block = dir_header->next_block;

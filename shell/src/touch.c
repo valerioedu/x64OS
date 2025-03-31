@@ -42,7 +42,7 @@ void touch(char* args) {
         
         int result = current_dir->ops->create(current_dir, args, 0644);
         if (result) {
-            kprintf("File '%s' created successfully\n", args);
+            //kprintf("File '%s' created successfully\n", args);
         } else {
             kprintf("Failed to create file '%s'\n", args);
         }

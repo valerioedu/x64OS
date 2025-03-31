@@ -14,6 +14,24 @@ void fs_init() {
     
     global_root = root_sb->root;
     current_directory = global_root;
+
+    Inode* current = get_current_dir();
+    if (current->ops->mkdir(current, "home", 0755)) {
+        kprintf("Created home directory\n");
+    } else {
+        kprintf("Failed to create home directory\n");
+    }
+    if (current->ops->mkdir(current, "bin", 0755)) {
+        kprintf("Created bin directory\n");
+    } else {
+        kprintf("Failed to create bin directory\n");
+    }
+
+    if (current->ops->mkdir(current, "lib", 0755)) {
+        kprintf("Created lib directory\n");
+    } else {
+        kprintf("Failed to create lib directory\n");
+    }
     
     kprintf("Filesystem initialized with root at inode %d\n", 
             ((InodeCacheEntry*)global_root->fs_specific)->inode_num);

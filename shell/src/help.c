@@ -30,6 +30,10 @@ void help(char* args) {
     kprintcolor("<filename>", LIGHT_MAGENTA);
     kprintcolor(" -", WHITE);
     kprint(" Remove a file\n");
+    kprintcolor("  rmdir ", LIGHT_BROWN);
+    kprintcolor("<directory>", LIGHT_MAGENTA);
+    kprintcolor(" -", WHITE);
+    kprint(" Remove a directory\n");
     kprintcolor("  write ", LIGHT_BROWN);
     kprintcolor("<filename> <text>", LIGHT_MAGENTA);
     kprintcolor(" -", WHITE);

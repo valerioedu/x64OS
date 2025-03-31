@@ -845,7 +845,7 @@ static void free_block(DiskfsInfo* dfs, uint32_t block) {
     }
     
     if (!test_bitmap_bit(bitmap_sector, bit_in_sector)) {
-        kprintf("free_block: Block %d is already free\n", block);
+        //kprintf("free_block: Block %d is already free\n", block);
         return;
     }
     
@@ -865,8 +865,9 @@ static void free_block(DiskfsInfo* dfs, uint32_t block) {
         return;
     }
     
-    kprintf("DEBUG: Freed block %d (bit %d in sector %d)\n", 
-            block, bit_in_sector, bitmap_start_block + sector_offset);
+    
+    sleep(5);//kprintf("DEBUG: Freed block %d (bit %d in sector %d)\n", 
+    //        block, bit_in_sector, bitmap_start_block + sector_offset);
 }
 
 static InodeCacheEntry* get_inode(DiskfsInfo* dfs, uint32_t inode_num) {
