@@ -20,6 +20,7 @@ typedef struct InodeOps {
     int (*write)(struct Inode* inode, uint64_t offset, const void* buffer, uint64_t size);
     int (*delete)(struct Inode* dir, const char* name);
     int (*mkdir)(struct Inode* dir, const char* name, int mode);
+    int (*truncate)(struct inode* inode, uint64_t size);
 } InodeOps;
 
 typedef struct Inode {
