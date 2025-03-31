@@ -23,7 +23,8 @@ main.bin: main.o ../kernel/vga.o ../kernel/string.o ../kernel/kernel.o \
 		 ../kernel/cpu/interrupts.o ../kernel/cpu/isr.o ../kernel/keyboard.o \
 		 ../kernel/cpu/fpu.o ../kernel/ide.o ../kernel/macros.o ../kernel/input.o ../kernel/read.o \
 		 ../kernel/write.o ../kernel/fs/vfs.o ../kernel/fs/diskfs.o ../kernel/fs/fs.o \
-		 ../kernel/fs/file.o#\
+		 ../kernel/fs/file.o ../shell/shell.o ../shell/rm.o ../shell/cd.o ../shell/ls.o \
+		 ../shell/help.o ../shell/clear.o ../shell/touch.o ../shell/mkdir.o #\
 		 ../kernel/threading/context_switch.o ../kernel/threading/queue.o \
 		 ../kernel/threading/scheduling.o 
 	$(LD) $(LDFLAGS) $^ -o $@

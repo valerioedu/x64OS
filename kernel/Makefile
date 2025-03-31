@@ -9,6 +9,7 @@ all: submake vga.o kernel.o string.o heap.o cpu/idt.o cpu/idt_load.o keyboard.o 
 submake:
 	$(MAKE) -C cpu
 	$(MAKE) -C fs
+	$(MAKE) -C ../shell
 #	$(MAKE) -C threading
 
 vga.o: drivers/vga/vga.c
@@ -45,4 +46,5 @@ clean:
 	rm -f *.o
 	$(MAKE) -C cpu clean
 	$(MAKE) -C fs clean
+	$(MAKE) -C ../shell clean
 #	$(MAKE) -C threading clean

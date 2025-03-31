@@ -16,14 +16,4 @@ void ls(char* args);
 void touch(char* args);
 void rm(char* args);
 
-Command commands[] = {
-    {"help", help},
-    {"clear", clear},
-    {"mkdir", mkdir},
-    {"cd", cd},
-    {"ls", ls},
-    {"touch", touch},
-    {"rm", rm}
-};
-
 #endif

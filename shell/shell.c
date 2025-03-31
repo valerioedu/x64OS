@@ -1,6 +1,18 @@
 #include "../lib/definitions.h"
 #include "../kernel/kernel/kernel.h"
-#include "commands/commands.h"
+#include "src/commands.h"
+#include "../kernel/fs/fs.h"
+#include "../kernel/drivers/keyboard/keyboard.h"
+
+Command commands[] = {
+    {"help", help},
+    {"clear", clear},
+    {"mkdir", mkdir},
+    {"cd", cd},
+    {"ls", ls},
+    {"touch", touch},
+    {"rm", rm}
+};
 
 void shell_loop() {
     kprint("ProtoBash Shell\n");
