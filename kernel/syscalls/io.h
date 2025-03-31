@@ -12,6 +12,10 @@
 #define stdin 0
 #endif
 
+#ifndef stderr
+#define stderr 2
+#endif
+
 typedef struct io{
     int fd;
     uint32_t buf_len;
