@@ -143,7 +143,7 @@ char* keyboard_read_line() {
 
     while (1) {
         char c;
-        while ((c = keyboard_get_char()) == 0) {}
+        while ((c = keyboard_get_char()) == 0) asm volatile ("hlt");
 
         g_last_char = 0;
 

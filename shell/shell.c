@@ -1,7 +1,8 @@
 #include "../lib/definitions.h"
-#include "../kernel/kernel/kernel.h"
 #include "src/commands.h"
+#include "../lib/r0io.h"
 #include "../kernel/fs/fs.h"
+#include "../kernel/drivers/vga/vga.h"
 #include "../kernel/drivers/keyboard/keyboard.h"
 
 Command commands[] = {
@@ -16,13 +17,15 @@ Command commands[] = {
 };
 
 void shell_init() {
-    kprintf("\n\n\n-----------------------\n");
+    kprintf("-----------------------\n");
     kprintf("ProtoBash Shell\n");
     kprintf("Type 'help' for a list of commands\n");
     kprintf("-----------------------\n\n");
 }
 
 void shell_loop() {
+    vga_clear();
+    vga_move_cursor(0, 0);
     shell_init();
     while (1) {
         kprintf("x64OS");
@@ -31,7 +34,9 @@ void shell_loop() {
         set_color(LIGHT_CYAN);
         kprintf("%s$ ", get_current_path());
         set_color(LIGHT_GREEN);
-        char* command_line = keyboard_read_line();
+        char command_line[512] = {0};
+        kfgets(command_line, 512, 0);
+        while (command_line[0] == 0 ) asm volatile ("hlt");
         if (command_line) {
             char command[64] = {0};
             char args[512] = {0};
