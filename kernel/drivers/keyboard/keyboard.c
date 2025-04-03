@@ -2,7 +2,7 @@
 #include "../../cpu/src/pic.h"
 #include "../../../lib/definitions.h"
 #include "../vga/vga.h"
-#include "macros.h"
+//#include "macros.h"
 
 #define BUFFER_SIZE 2048
 
@@ -114,7 +114,7 @@ void isr_keyboard_handler() {
             g_last_char = g_last_char - 'a' + 1;
         }
 
-        check_for_macros();
+        //check_for_macros();
     }
 
     pic_send_eoi(1);

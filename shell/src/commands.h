@@ -16,5 +16,6 @@ void ls(char* args);
 void touch(char* args);
 void rm(char* args);
 void rmdir(char* args);
+int exec(const char* path);
 
 #endif

@@ -1,7 +1,7 @@
 CC = x86_64-linux-gnu-gcc
 CFLAGS = -m64 -ffreestanding -fno-pie -fno-stack-protector -nostdlib -c
 
-all: shell.o rm.o cd.o ls.o help.o clear.o touch.o mkdir.o 
+all: shell.o rm.o cd.o ls.o help.o clear.o touch.o mkdir.o exec.o
 
 shell.o: shell.c
 	$(CC) $(CFLAGS) $< -o $@
@@ -27,5 +27,7 @@ touch.o: src/touch.c
 mkdir.o: src/mkdir.c
 	$(CC) $(CFLAGS) $< -o $@
 
+exec.o: src/exe.c
+	$(CC) $(CFLAGS) $< -o $@
 clean:
 	rm -f *.o

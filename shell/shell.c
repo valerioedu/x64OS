@@ -59,15 +59,27 @@ void shell_loop() {
             args[j] = '\0';
 
             bool found = false;
-            for (int k = 0; k < sizeof(commands) / sizeof(Command); k++) {
-                if (strcmp(command, commands[k].name) == 0) {
-                    commands[k].function(args);
-                    found = true;
+            for (size_t i = 0; i < sizeof(commands) / sizeof(Command); i++) {
+                if (strcmp(command, commands[i].name) == 0) {
+                    commands[i].function(args);
+                    found = 1;
                     break;
                 }
             }
+
             if (!found) {
-                kprintf("Command not found: %s\n", command);
+                // Try to execute as binary
+                char full_path[512] = {0};
+                if (command[0] != '/') {
+                    // Relative path, add current directory
+                    kprintf(full_path, "%s/%s", get_current_path(), command);
+                } else {
+                    strcpy(full_path, command);
+                }
+                
+                if (exec(full_path) != 0) {
+                    kprintf("Command not found: %s\n", command);
+                }
             }
         }
     }
