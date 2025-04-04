@@ -19,13 +19,6 @@ _start:
     mov dl, [BOOT_DRIVE]
     call disk_load
 
-    mov ax, 0x1000
-    mov es, ax
-    mov bx, 128 * 512
-    mov dh, 128
-    mov dl, [BOOT_DRIVE]
-    call disk_load
-
     call switch_to_pm
 
     jmp $
