@@ -1,7 +1,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/valerioedu/x64os/badge/main)](https://www.codefactor.io/repository/github/valerioedu/x64os/overview/main)
 # x64OS
 
-**64-bit Operative System for AMD64 using QEMU**
+**64-bit Operating System for AMD64 using QEMU**
 
 ## Description
 
