@@ -117,113 +117,53 @@ void ide_handle_interrupt(int channel) {
     }
 }
 
-int ide_read_async(uint8_t drive, uint32_t lba, uint8_t sector_count, uint16_t* buffer) {
-    int channel = (drive & 1);
+
+static int ide_pio_28(uint8_t drive, uint32_t lba,
+                      uint8_t cmd, uint16_t sectors,
+                      const uint16_t *wbuf,
+                      uint16_t *rbuf)
+{
+    int channel   = drive & 1;
     int ata_drive = (drive & 2) >> 1;
-    uint16_t base = ide_channels[channel].base;
-    
-    if (channel_status[channel].busy) {
-        return 0;
+    uint16_t io   = ide_channels[channel].base;
+
+    while (inb(io + ATA_REG_STATUS) & ATA_SR_BSY) ;
+
+    outb(io + ATA_REG_DRIVE_SELECT, 0xE0 | (ata_drive << 4) | ((lba >> 24) & 0x0F));
+    outb(io + ATA_REG_SECTOR_COUNT, sectors);
+    outb(io + ATA_REG_LBA_LOW,      (uint8_t) lba);
+    outb(io + ATA_REG_LBA_MID,      (uint8_t)(lba >> 8));
+    outb(io + ATA_REG_LBA_HIGH,     (uint8_t)(lba >> 16));
+
+    outb(io + ATA_REG_COMMAND, cmd);
+
+    for (uint16_t s = 0; s < sectors; ++s) {
+        uint8_t st;
+        do { st = inb(io + ATA_REG_STATUS); } while ((st & (ATA_SR_BSY | ATA_SR_DRQ)) != ATA_SR_DRQ);
+
+        if (st & ATA_SR_ERR) return 0;
+
+        if (cmd == ATA_CMD_READ_PIO) {
+            for (int i = 0; i < 256; ++i) *rbuf++ = inw(io + ATA_REG_DATA);
+        } else {
+            for (int i = 0; i < 256; ++i) outw(io + ATA_REG_DATA, *wbuf++);
+        }
     }
-    
-    channel_status[channel].busy = 1;
-    channel_status[channel].drive = ata_drive;
-    channel_status[channel].command = ATA_CMD_READ_PIO;
-    channel_status[channel].lba = lba;
-    channel_status[channel].sector_count = sector_count;
-    channel_status[channel].buffer = buffer;
-    channel_status[channel].words_left = 256;
-    channel_status[channel].sectors_left = sector_count;
-    channel_status[channel].callback_ready = 0;
-    
-    while (inb(base + ATA_REG_STATUS) & ATA_SR_BSY);
-    
-    outb(base + ATA_REG_DRIVE_SELECT, 0xE0 | (ata_drive << 4) | ((lba >> 24) & 0x0F));
-    outb(base + ATA_REG_SECTOR_COUNT, sector_count);
-    outb(base + ATA_REG_LBA_LOW, lba & 0xFF);
-    outb(base + ATA_REG_LBA_MID, (lba >> 8) & 0xFF);
-    outb(base + ATA_REG_LBA_HIGH, (lba >> 16) & 0xFF);
-    
-    outb(base + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
-    
+
+    if (cmd == ATA_CMD_WRITE_PIO) {
+        while (inb(io + ATA_REG_STATUS) & ATA_SR_BSY) ;
+            outb(io + ATA_REG_COMMAND, 0xE7);
+    }
     return 1;
 }
 
-int ide_write_async(uint8_t drive, uint32_t lba, uint8_t sector_count, uint16_t* buffer) {
-    int channel = (drive & 1);
-    int ata_drive = (drive & 2) >> 1;
-    uint16_t base = ide_channels[channel].base;
-    
-    if (channel_status[channel].busy) {
-        return 0;
-    }
-    
-    channel_status[channel].busy = 1;
-    channel_status[channel].drive = ata_drive;
-    channel_status[channel].command = ATA_CMD_WRITE_PIO;
-    channel_status[channel].lba = lba;
-    channel_status[channel].sector_count = sector_count;
-    channel_status[channel].buffer = buffer;
-    channel_status[channel].words_left = 256;
-    channel_status[channel].sectors_left = sector_count;
-    channel_status[channel].callback_ready = 0;
-    
-    while (inb(base + ATA_REG_STATUS) & ATA_SR_BSY);
-    
-    outb(base + ATA_REG_DRIVE_SELECT, 0xE0 | (ata_drive << 4) | ((lba >> 24) & 0x0F));
-    outb(base + ATA_REG_SECTOR_COUNT, sector_count);
-    outb(base + ATA_REG_LBA_LOW, lba & 0xFF);
-    outb(base + ATA_REG_LBA_MID, (lba >> 8) & 0xFF);
-    outb(base + ATA_REG_LBA_HIGH, (lba >> 16) & 0xFF);
-    
-    outb(base + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
-    
-    while (!(inb(base + ATA_REG_STATUS) & ATA_SR_DRQ));
-    
-    for (int i = 0; i < 256; i++) {
-        outw(base + ATA_REG_DATA, buffer[i]);
-    }
-    
-    channel_status[channel].buffer += 256;
-    channel_status[channel].sectors_left--;
-    
-    if (channel_status[channel].sectors_left == 0) {
-        channel_status[channel].busy = 0;
-        channel_status[channel].callback_ready = 1;
-    }
-    
-    return 1;
+int ide_read_sectors(uint8_t drive, uint32_t lba, uint16_t count, void *buf) {
+    return ide_pio_28(drive, lba, ATA_CMD_READ_PIO, count, NULL, buf);
 }
 
-int ide_read(uint8_t drive, uint32_t lba, uint8_t sector_count, uint16_t* buffer) {
-    if (!ide_read_async(drive, lba, sector_count, buffer)) {
-        return 0;
-    }
-    
-    int channel = (drive & 1);
-    
-    while (!channel_status[channel].callback_ready) {
-        asm volatile("pause");
-    }
-    
-    return 1;
+int ide_write_sectors(uint8_t drive, uint32_t lba, uint16_t count, const void *buf) {
+    return ide_pio_28(drive, lba, ATA_CMD_WRITE_PIO, count, buf, NULL);
 }
 
-int ide_write(uint8_t drive, uint32_t lba, uint8_t sector_count, uint16_t* buffer) {
-    if (!ide_write_async(drive, lba, sector_count, buffer)) {
-        return 0;
-    }
-    
-    int channel = (drive & 1);
-    
-    while (!channel_status[channel].callback_ready) {
-        asm volatile("pause");
-    }
-    
-    return 1;
-}
-
-int ide_operation_complete(uint8_t drive) {
-    int channel = (drive & 1);
-    return channel_status[channel].callback_ready;
-}
+int ide_read (uint8_t d, uint32_t l, uint8_t c, uint16_t *b){return ide_read_sectors (d,l,c,b);}
+int ide_write(uint8_t d, uint32_t l, uint8_t c, uint16_t *b){return ide_write_sectors(d,l,c,b);}

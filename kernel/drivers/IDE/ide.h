@@ -50,11 +50,8 @@ typedef struct {
 } IDEChannel;
 
 void ide_init();
-int ide_read(uint8_t drive, uint32_t lba, uint8_t sector_count, uint16_t* buffer);
-int ide_write(uint8_t drive, uint32_t lba, uint8_t sector_count, uint16_t* buffer);
-int ide_read_async(uint8_t drive, uint32_t lba, uint8_t sector_count, uint16_t* buffer);
-int ide_write_async(uint8_t drive, uint32_t lba, uint8_t sector_count, uint16_t* buffer);
-int ide_operation_complete(uint8_t drive);
 void ide_handle_interrupt(int channel);
+int ide_read (uint8_t d, uint32_t l, uint8_t c, uint16_t *b);
+int ide_write(uint8_t d, uint32_t l, uint8_t c, uint16_t *b);
 
 #endif
