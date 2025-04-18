@@ -195,6 +195,35 @@ void kprintf(const char* format, ...) {
                     }
                     break;
                 }
+                case 'p': {
+                    void* ptr = va_arg(args, void*);
+                    kprint("0x");
+                    int num = (int)ptr;
+                    char buf[16];
+                    int i = 0;
+                    
+                    do {
+                        int digit = num % 16;
+                        buf[i++] = digit < 10 ? '0' + digit : 'A' + digit - 10;
+                        num /= 16;
+                    } while (num > 0 && i < 15);
+                    
+                    buf[i] = '\0';
+                    
+                    for (int j = 0, k = i - 1; j < k; j++, k--) {
+                        char temp = buf[j];
+                        buf[j] = buf[k];
+                        buf[k] = temp;
+                    }
+                    
+                    kprint(buf);
+                    break;
+                }
+                case 'u': {
+                    unsigned int num = va_arg(args, unsigned int);
+                    kprint_num(num);
+                    break;
+                }
                 default:
                     vga_putc('%');
                     vga_putc(*p);
