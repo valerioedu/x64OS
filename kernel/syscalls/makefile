@@ -23,7 +23,10 @@ stat.o: sys_stat/stat.c
 write.o: sys_write/write.c
 	$(CC) $(CFLAGS) $< -o $@
 
-syscalls.o: write.o read.o open.o close.o sleep.o stat.o
+sys.o: sys.c
+	$(CC) $(CFLAGS) $< -o $@
+
+syscalls.o: write.o read.o open.o close.o sleep.o stat.o sys.o
 	$(LD) -r -o $@ $^
 
 clean:

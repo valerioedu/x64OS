@@ -103,9 +103,7 @@ void pci_init(void) {
         }
     }
 
-    kprint("PCI scan complete. Devices found: ");
-    kprint_hex(pci_device_count);
-    kprint("\n");
+    kprintf("PCI scan complete. Found %d devices.\n", pci_device_count);
 }
 
 int pci_get_device_count(void) {return pci_device_count;}

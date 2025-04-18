@@ -13,14 +13,6 @@ typedef struct syscall_t {
     void* syscall;
 } syscall_t;
 
-syscall_t syscall_table[] = {
-    {0, &read},
-    {1, &write},
-    {2, &open},
-    {3, &close},
-    {4, &stat},
-    {5, &fstat},
-    {6, &sleep}
-};
+extern syscall_t syscall_table[];
 
 #endif
