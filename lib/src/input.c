@@ -149,3 +149,47 @@ char* kfgets(char* buffer, int size, int fd) {
     
     return buffer;
 }
+
+int vsprintf(char* buffer, const char* format, va_list args) {
+    int written = 0;
+    
+    for (const char* ptr = format; *ptr; ptr++) {
+        if (*ptr == '%') {
+            ptr++;
+            switch (*ptr) {
+                case 'd': {
+                    int value = va_arg(args, int);
+                    written += sprintf(buffer + written, "%d", value);
+                    break;
+                }
+                case 's': {
+                    const char* str = va_arg(args, const char*);
+                    written += sprintf(buffer + written, "%s", str);
+                    break;
+                }
+                case 'c': {
+                    char c = (char)va_arg(args, int);
+                    buffer[written++] = c;
+                    break;
+                }
+                default:
+                    buffer[written++] = *ptr;
+            }
+        } else {
+            buffer[written++] = *ptr;
+        }
+    }
+    
+    buffer[written] = '\0';
+    return written;
+}
+
+int sprintf(char* buffer, const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    
+    int written = vsprintf(buffer, format, args);
+    
+    va_end(args);
+    return written;
+}
