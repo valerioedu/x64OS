@@ -19,10 +19,19 @@ IDEChannel ide_channels[2] = {
 
 ide_channel_status_t channel_status[2] = { {0}, {0} };
 
-void ide_wait(uint16_t io) {
-    for (int i = 0; i < 4; i++) {
-        inb(io + ATA_REG_STATUS);
+static int ata_wait(uint16_t io, int check_err) {
+    for (int i = 0; i < 4; i++) inb(io + ATA_REG_STATUS);
+
+    for (uint32_t t = 0;t < 1000000; t++) {
+        uint8_t st = inb(io + ATA_REG_STATUS);
+        if (!(st & ATA_SR_BSY) && (st & ATA_SR_DRQ)) return 0;
+        if (check_err && (st & ATA_SR_ERR)) return -1;
     }
+    return -2;
+}
+
+void ide_wait(uint16_t io) {
+    ata_wait(io, 0);
 }
 
 void ide_enable_irq(int channel) {
@@ -117,7 +126,6 @@ void ide_handle_interrupt(int channel) {
     }
 }
 
-
 static int ide_pio_28(uint8_t drive, uint32_t lba,
                       uint8_t cmd, uint16_t sectors,
                       const uint16_t *wbuf,
@@ -139,9 +147,12 @@ static int ide_pio_28(uint8_t drive, uint32_t lba,
 
     for (uint16_t s = 0; s < sectors; ++s) {
         uint8_t st;
-        do { st = inb(io + ATA_REG_STATUS); } while ((st & (ATA_SR_BSY | ATA_SR_DRQ)) != ATA_SR_DRQ);
 
         if (st & ATA_SR_ERR) return 0;
+
+        int r = ata_wait(io, 1);
+        if (r) return 0;
+        kprint("ok\n");
 
         if (cmd == ATA_CMD_READ_PIO) {
             for (int i = 0; i < 256; ++i) *rbuf++ = inw(io + ATA_REG_DATA);
