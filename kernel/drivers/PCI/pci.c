@@ -59,7 +59,7 @@ static void pci_add_device(uint8_t bus, uint8_t dev, uint8_t func) {
 
     kprintf("Found PCI device: Bus %d, Device %d, Function %d\n", bus, dev, func);
     kprintf("Vendor ID: 0x%x, Device ID: 0x%x\n", d->vendor_id, d->device_id);
-    kprintf("Class Code: 0x%X, Subclass: 0x%x, Prog IF: 0x%x, Revision: 0x%x\n",
+    kprintf("Class Code: 0x%x, Subclass: 0x%x, Prog IF: 0x%x, Revision: 0x%x\n",
             d->class_code, d->subclass, d->prog_if, d->revision);
     kprintf("PCI device %d added\n", pci_device_count);
 }
