@@ -29,5 +29,6 @@ typedef struct PciDevice {
 void pci_init(void);
 int pci_get_device_count(void);
 const PciDevice* pci_get_device(int index);
+uint32_t pci_config_read32(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset);
 
 #endif

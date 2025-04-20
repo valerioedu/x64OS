@@ -3,8 +3,7 @@
 static PciDevice pci_devices[MAX_PCI_DEVICES];
 static int pci_device_count = 0;
 
-static uint32_t pci_config_read32(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset)
-{
+uint32_t pci_config_read32(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset) {
     uint32_t address = (1u << 31)            |
                        ((uint32_t)bus      << 16) |
                        ((uint32_t)device    << 11) |
