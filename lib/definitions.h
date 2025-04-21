@@ -59,6 +59,6 @@ char* strchr(const char* str, int c);
 char *strtok(char* str, const char* delim);
 char *strcat(char *dest, const char *src);
 char* strrchr(const char* str, int c);
-int memcmp(const void* s1, const void* s2, size_t n)
+int memcmp(const void* s1, const void* s2, size_t n);
 
 #endif
