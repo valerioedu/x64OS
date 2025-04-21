@@ -53,5 +53,6 @@ void ide_init();
 void ide_handle_interrupt(int channel);
 int ide_read (uint8_t d, uint32_t l, uint8_t c, uint16_t *b);
 int ide_write(uint8_t d, uint32_t l, uint8_t c, uint16_t *b);
+int load_sectors(uint8_t drive, uint16_t count, uint16_t* buffer);
 
 #endif

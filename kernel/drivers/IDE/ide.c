@@ -19,6 +19,8 @@ IDEChannel ide_channels[2] = {
     {ATA_SECONDARY, 0x376, 0}
 };
 
+static uint16_t lba_count = 129;        /*1 sector for bootloader, 128 for the first load*/
+
 static ide_channel_status_t channel_status[2] = { {0}, {0} };
 
 static int ata_get_channel_bases(void) {
@@ -202,4 +204,29 @@ void ide_handle_interrupt(int channel) {
 
 eoi:
     pic_send_eoi(14 + channel);
+}
+
+uint16_t ide_get_lba_count(void) 
+{ return lba_count; }
+
+int load_sectors(uint8_t drive, uint16_t count, uint16_t* buffer) {
+    uint16_t lba = ide_get_lba_count();
+    uint16_t sectors_read = 0;
+    int result = -count;
+
+    while (sectors_read < count) {
+        uint16_t sectors = (count - sectors_read > 255) ? 255 : (count - sectors_read);
+
+        result += ide_read_sectors(drive, lba + sectors_read, sectors, buffer + sectors_read * 256);
+        sectors_read += sectors;
+    }
+
+    lba_count += count;
+
+    if (result < 0) {
+        kprintf("Error reading sectors: %d\n", result);
+        return -1;
+    }
+
+    return 1;
 }
