@@ -75,7 +75,7 @@ static inline void ide_enable_irq(int channel) {
 }
 
 void ide_init(void) {
-    kprint("Initializing IDE…\n");
+    kprint("Initializing IDE...\n");
 
     if (ata_get_channel_bases() != 0) return;
 
@@ -116,6 +116,7 @@ static int ide_pio_28(uint8_t drive, uint32_t lba,
     uint16_t io        = ide_channels[channel].base;
 
     int w = ata_wait(io, 1);
+    if (w) return w;
 
     outb(io + ATA_REG_SECTOR_COUNT, (uint8_t)sectors);
     outb(io + ATA_REG_LBA_LOW, (uint8_t)  lba);
@@ -206,27 +207,24 @@ eoi:
     pic_send_eoi(14 + channel);
 }
 
-uint16_t ide_get_lba_count(void) 
+static uint16_t ide_get_lba_count(void) 
 { return lba_count; }
 
 int load_sectors(uint8_t drive, uint16_t count, uint16_t* buffer) {
     uint16_t lba = ide_get_lba_count();
     uint16_t sectors_read = 0;
-    int result = -count;
+    int errors = 0;
 
     while (sectors_read < count) {
         uint16_t sectors = (count - sectors_read > 255) ? 255 : (count - sectors_read);
 
-        result += ide_read_sectors(drive, lba + sectors_read, sectors, buffer + sectors_read * 256);
+        if (!ide_read_sectors(drive, lba + sectors_read, sectors, buffer + sectors_read * 256)) errors++;
         sectors_read += sectors;
     }
 
     lba_count += count;
 
-    if (result < 0) {
-        kprintf("Error reading sectors: %d\n", result);
-        return -1;
-    }
+    if (errors) kprintf("IDE: %d errors while loading sectors\n", errors);
 
-    return 1;
+    return errors ? -errors : 1;
 }
