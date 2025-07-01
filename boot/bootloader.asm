@@ -15,7 +15,7 @@ _start:
     mov ax, 0x1000
     mov es, ax
     mov bx, 0x0000
-    mov dh, 128
+    mov dh, 127          ; Load 127 sectors (maximum safe BIOS limit)
     mov dl, [BOOT_DRIVE]
     call disk_load
 
