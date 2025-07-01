@@ -19,7 +19,7 @@ IDEChannel ide_channels[2] = {
     {ATA_SECONDARY, 0x376, 0}
 };
 
-static uint16_t lba_count = 129;        /*1 sector for bootloader, 128 for the first load*/
+static uint16_t lba_count = 141;        /*1 sector for bootloader, 140 for the first load*/
 
 static ide_channel_status_t channel_status[2] = { {0}, {0} };
 

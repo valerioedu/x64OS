@@ -1,11 +1,24 @@
 #include "../fs.h"
 #include "vfs.h"
 #include "diskfs.h"
+#include "../../drivers/IDE/ide.h"
 
 Inode* global_root = NULL;
 static char current_path[256] = "/";
 
 void fs_init() {
+    kprintf("Starting filesystem initialization...\n");
+    
+    // Test reading sectors beyond initial boot load
+    uint16_t test_buffer[256];
+    kprintf("Testing IDE sector reading beyond initial 140 sectors...\n");
+    int result = ide_read(0, 150, 1, test_buffer);  // Try to read sector 150
+    if (result) {
+        kprintf("Successfully read sector 150 - IDE driver working correctly\n");
+    } else {
+        kprintf("Failed to read sector 150 - IDE driver issue detected\n");
+    }
+    
     SuperBlock* root_sb = diskfs_mount(0, 0, 1);  // Primary drive, first sector, auto-format
     if (!root_sb) {
         kprintf("Failed to mount root filesystem\n");
